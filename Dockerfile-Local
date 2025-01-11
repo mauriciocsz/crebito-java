@@ -1,0 +1,30 @@
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
+
+WORKDIR /app
+
+COPY src src
+COPY pom.xml pom.xml
+
+RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests
+
+FROM eclipse-temurin:21-alpine
+
+COPY --from=build /app/target/crebito*.jar crebito.jar
+
+EXPOSE 8080
+EXPOSE 9090
+EXPOSE $JMX_PORT
+
+CMD sh -c 'java \
+    -Xms150m \
+    -Xmx170m \
+    -XX:StartFlightRecording=name=app_recording,filename=/app_recording.jfr,dumponexit=true \
+    -Dcom.sun.management.jmxremote.port=${JMX_PORT} \
+    -Dcom.sun.management.jmxremote.rmi.port=${JMX_PORT} \
+    -Dcom.sun.management.jmxremote.local.only=false \
+    -Dcom.sun.management.jmxremote.authenticate=false \
+    -Dcom.sun.management.jmxremote.ssl=false \
+    -Djava.rmi.server.hostname=0.0.0.0 \
+    -Dcom.sun.management.jmxremote.host=0.0.0.0 \
+    -Dspring.profiles.active=prod \
+    -jar crebito.jar'
