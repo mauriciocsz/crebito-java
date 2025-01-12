@@ -106,11 +106,6 @@ class UsersControllerTest {
         ReflectionTestUtils.setField(requestDTO, "valor", BigDecimal.valueOf(1234L));
         ReflectionTestUtils.setField(requestDTO, "tipo", "c");
         ReflectionTestUtils.setField(requestDTO, "descricao", "aDesc");
-        ReflectionTestUtils.setField(
-            requestDTO,
-            "createdDate",
-            ZonedDateTime.ofInstant(instant, ZoneId.systemDefault())
-        );
 
         UserBalance resultingBalance = mock(UserBalance.class);
         when(resultingBalance.limit()).thenReturn(9999L);
@@ -138,11 +133,6 @@ class UsersControllerTest {
         ReflectionTestUtils.setField(requestDTO, "valor", BigDecimal.valueOf(1234L));
         ReflectionTestUtils.setField(requestDTO, "tipo", "c");
         ReflectionTestUtils.setField(requestDTO, "descricao", "aDesc");
-        ReflectionTestUtils.setField(
-            requestDTO,
-            "createdDate",
-            ZonedDateTime.ofInstant(instant, ZoneId.systemDefault())
-        );
 
         when(createTransactionService.execute(anyString(), any(Transaction.class)))
             .thenThrow(UserNotFoundException.class);
@@ -166,11 +156,6 @@ class UsersControllerTest {
         ReflectionTestUtils.setField(requestDTO, "valor", BigDecimal.valueOf(1234L));
         ReflectionTestUtils.setField(requestDTO, "tipo", "d");
         ReflectionTestUtils.setField(requestDTO, "descricao", "aDesc");
-        ReflectionTestUtils.setField(
-            requestDTO,
-            "createdDate",
-            ZonedDateTime.ofInstant(instant, ZoneId.systemDefault())
-        );
 
         when(createTransactionService.execute(anyString(), any(Transaction.class)))
             .thenThrow(InvalidUserTransactionException.class);

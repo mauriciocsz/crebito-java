@@ -1,5 +1,6 @@
 package com.mauriciocsz.crebito.adapters.controllers.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mauriciocsz.crebito.domain.entities.Transaction;
 import com.mauriciocsz.crebito.domain.entities.TransactionType;
@@ -23,6 +24,7 @@ public class TransactionDTO {
     @Size(min= 1, max = 10)
     private String descricao;
     @JsonProperty("realizada_em")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private ZonedDateTime createdDate;
 
     private TransactionDTO(Long valor, String tipo, String descricao, ZonedDateTime createdDate) {
