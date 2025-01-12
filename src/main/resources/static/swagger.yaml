@@ -1,0 +1,140 @@
+openapi: 3.0.1
+info:
+  title: Crebito
+  version: v1
+paths:
+  /clientes/{id}/transacoes:
+    post:
+      tags:
+        - users-controller
+      operationId: createTransaction
+      summary: Creates a new transaction for a user.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "The user's ID."
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionCreationResponseDTO"
+        "404":
+          $ref: "#/components/responses/NotFoundUser"
+        "422":
+          description: Does not process the request in case the body is incorrect or the transaction cannot be executed.
+  /clientes/{id}/extrato:
+    get:
+      tags:
+        - users-controller
+      operationId: getBankStatement
+      summary: Gets an user's current bank statement.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "The user's ID."
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BankStatementDTO"
+              examples:
+                commonExample:
+                  $ref: "#/components/examples/BankStatementExample"
+        "404":
+          $ref: "#/components/responses/NotFoundUser"
+components:
+  responses:
+    NotFoundUser:
+      description: The user does not exist, thus the operation cannot be executed.
+  schemas:
+    TransactionDTO:
+      required:
+        - descricao
+        - tipo
+        - valor
+      type: object
+      properties:
+        valor:
+          type: number
+          minimum: 1
+          description: |
+            Transaction amount in cents (e.g.: 1 -> $0.01).
+        tipo:
+          pattern: "^[dc]$"
+          type: string
+          description: |
+            Type of the transaction: "c" - credit; "d" - debit;
+        descricao:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: |
+            Simple description of the transaction.
+    TransactionCreationResponseDTO:
+      type: object
+      properties:
+        limite:
+          type: number
+          description: |
+            User's account limit in cents (e.g.: 1 -> $0.01).
+        saldo:
+          type: number
+          description: |
+            User's current balance in cents (e.g.: 1 -> $0.01).
+    BalanceDTO:
+      type: object
+      properties:
+        total:
+          type: number
+          description: |
+            User's current balance in cents (e.g.: 1 -> $0.01).
+        limite:
+          type: number
+          description: |
+            User's account limit in cents (e.g.: 1 -> $0.01).
+        data_extrato:
+          type: string
+          format: date-time
+          description: |
+            Date of the balance's query.
+    BankStatementDTO:
+      type: object
+      properties:
+        saldo:
+          $ref: "#/components/schemas/BalanceDTO"
+          description: |
+            User's current balance information.
+        ultimas_transacoes:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransactionDTO"
+          description: |
+            The 10 most recent transactions of the user.
+  examples:
+    BankStatementExample:
+      summary: "Bank statement"
+      value:
+        saldo:
+          total: -2399
+          limite: 100000
+          data_extrato: "2025-01-12T14:45:22.544Z"
+        ultimas_transacoes:
+          - valor: 2399
+            tipo: "d"
+            descricao: "Freddy Fazbear's Pizza"

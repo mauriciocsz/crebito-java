@@ -31,6 +31,8 @@ During development, this project was thoroughly tested using various tools to im
 > 
 > Another option is running the compose `docker/docker-compose-local.yml` (already configured). 
 
+Additionally, a [Swagger](https://swagger.io/) documentation is available at `/swagger-ui.html`, containing information about all endpoints and some examples to aid testing and help understand all API functionalities.
+
 ---
 
 ## Validation 
