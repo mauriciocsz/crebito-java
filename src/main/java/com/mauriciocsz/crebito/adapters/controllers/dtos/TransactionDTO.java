@@ -55,9 +55,16 @@ public class TransactionDTO {
     public static TransactionDTO fromDomain(Transaction domain) {
         return new TransactionDTO(
                 domain.getAmount(),
-                domain.getType().name(),
+                TransactionDTO.typeToTypeDigit(domain.getType()),
                 domain.getDescription(),
                 domain.getDate()
         );
+    }
+
+    public static String typeToTypeDigit(TransactionType type) {
+        return switch (type) {
+            case DEBIT -> "d";
+            case CREDIT -> "c";
+        };
     }
 }
